@@ -1,0 +1,13 @@
+[Unit]
+Description=Weekly restore test of the backups (Wednesdays 05:00)
+
+[Timer]
+# After the nightly snapshots (02:30-03:00) and the offsite push (03:45), and
+# away from the other weekly jobs. Persistent: if the server was off at 05:00,
+# it runs when it comes back instead of silently skipping a week.
+OnCalendar=Wed *-*-* 05:00:00
+Persistent=true
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,267 @@
+# Example Gatus configuration for the monitor: a small always-on board that is
+# NOT the server it watches. Placeholders only: example.com, *.example.internal
+# and 192.0.2.0/24 (TEST-NET-1, reserved for documentation).
+#
+# Two kinds of checks live here:
+#   endpoints           Gatus PULLS: HTTP, TCP and DNS probes every 2 minutes.
+#   external-endpoints  Jobs PUSH their result (monitoring/jobs/report-job.sh).
+#                       A missed heartbeat is itself a failure.
+#
+# Lint before deploying:  python3 monitoring/check_gatus_config.py
+# The copy in git monitors nothing until it is installed on the monitor and
+# Gatus is restarted; the drift check (drift/) catches the day someone forgets.
+
+metrics: false
+concurrency: 2
+
+storage:
+  type: sqlite
+  path: ${GATUS_DATA_PATH}
+  maximum-number-of-results: 720
+  maximum-number-of-events: 50
+
+web:
+  # Private dashboards here are reachable only over the VPN. If the address
+  # changes, change every pusher's GATUS_BASE_URL with it (see docs/lessons.md:
+  # the monitor once silenced its own health report this way).
+  address: ${GATUS_WEB_ADDRESS}
+  port: ${GATUS_WEB_PORT}
+
+alerting:
+  # One provider: a small serverless relay that authenticates the caller,
+  # validates the event, rate-limits, de-duplicates by id and forwards to a
+  # private chat channel. Gatus never holds the chat webhook URL.
+  custom:
+    url: https://alert-relay.example.com/event
+    method: POST
+    headers:
+      Authorization: Bearer ${GATUS_ALERT_TOKEN}
+      Content-Type: application/json
+    body: |
+      {
+        "id": "gatus-[ENDPOINT_GROUP]-[ENDPOINT_NAME]-[ALERT_TRIGGERED_OR_RESOLVED]",
+        "severity": "critical",
+        "source": "gatus",
+        "check": "[ENDPOINT_GROUP] [ENDPOINT_NAME]",
+        "state": "[ALERT_TRIGGERED_OR_RESOLVED]",
+        "details": "[ALERT_DESCRIPTION]"
+      }
+    default-alert:
+      failure-threshold: 3
+      success-threshold: 2
+      send-on-resolved: true
+      description: Three consecutive checks failed
+
+ui:
+  title: Homelab status
+  header: Homelab
+  dark-mode: true
+  default-sort-by: group
+
+external-endpoints:
+  # Heartbeat = expected cadence plus one run of grace, in HOURS: daily jobs
+  # get 30h, weekly jobs 192h. Gatus parses durations with Go's time.Duration,
+  # which has no days: `8d` does not start the service.
+  # Tokens are never in this file: the monitor expands them from its root-only
+  # environment file, and the server keeps the same values in a 0600 file.
+
+  # The monitor pulls a facts-only health report from the server over SSH
+  # (a key locked to one forced command) twice a day, judges thresholds
+  # (backup age, disk use, failed units, SMART) and pushes the verdict here.
+  - name: server-health
+    group: Infrastructure
+    token: ${GATUS_TOKEN_SERVER_HEALTH}
+    heartbeat:
+      interval: 18h
+    alerts:
+      - type: custom
+
+  # -- nightly snapshots (backups/backup_snapshot.sh via run-and-report.sh) --
+  - name: backup-app-a
+    group: Jobs
+    token: ${GATUS_TOKEN_BACKUP_APP_A}
+    heartbeat:
+      interval: 30h
+    alerts:
+      - type: custom
+
+  - name: backup-blog
+    group: Jobs
+    token: ${GATUS_TOKEN_BACKUP_BLOG}
+    heartbeat:
+      interval: 30h
+    alerts:
+      - type: custom
+
+  - name: backup-mailer
+    group: Jobs
+    token: ${GATUS_TOKEN_BACKUP_MAILER}
+    heartbeat:
+      interval: 30h
+    alerts:
+      - type: custom
+
+  # Daily offsite push to S3 (weekly for the large families). It refuses to
+  # ship a snapshot that is missing, stale or EMPTY: "fresh" alone once let
+  # empty directories through with a green check every night.
+  - name: backup-offsite-s3
+    group: Jobs
+    token: ${GATUS_TOKEN_BACKUP_OFFSITE_S3}
+    heartbeat:
+      interval: 30h
+    alerts:
+      - type: custom
+
+  # Weekly restore test (backups/restore_test.py). Red = a family failed OR
+  # could not be tested (unknown): untested is not green. Weekly, so threshold
+  # 1 to alert and to resolve; with 3/2 it would page on the third week.
+  - name: restore-test
+    group: Jobs
+    token: ${GATUS_TOKEN_RESTORE_TEST}
+    heartbeat:
+      interval: 192h
+    alerts:
+      - type: custom
+        failure-threshold: 1
+        success-threshold: 1
+
+  # Nightly drift check (drift/check_drift.py): installed files vs git.
+  - name: config-drift
+    group: Jobs
+    token: ${GATUS_TOKEN_CONFIG_DRIFT}
+    heartbeat:
+      interval: 30h
+    alerts:
+      - type: custom
+
+endpoints:
+  # -- public services, through the tunnel ----------------------------------
+  - name: blog
+    group: Public services
+    url: https://blog.example.com/healthz
+    interval: 2m
+    client:
+      timeout: 10s
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == ok"
+      - "[CERTIFICATE_EXPIRATION] > 168h"
+      - "[RESPONSE_TIME] < 5000"
+    alerts:
+      - type: custom
+
+  # A security property as a check, not just liveness: an anonymous request
+  # to the admin route must be refused. If a deploy ever drops the auth
+  # middleware, this goes red even though the site itself works fine.
+  - name: app-b admin requires auth
+    group: Public services
+    url: https://app-b.example.com/admin
+    interval: 5m
+    client:
+      timeout: 10s
+    conditions:
+      - "[STATUS] == any(401, 403)"
+      - "[CERTIFICATE_EXPIRATION] > 168h"
+    alerts:
+      - type: custom
+
+  # -- internal services, VPN/LAN only -----------------------------------------
+  # A route that actually loads the job store, not "/" (static HTML happily
+  # answers 200 while the data file underneath is unreadable).
+  - name: app-a
+    group: Internal services
+    url: http://homeserver.home.example.internal:3001/api/health
+    interval: 2m
+    client:
+      timeout: 5s
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].store == ok"
+      - "[RESPONSE_TIME] < 2000"
+    alerts:
+      - type: custom
+
+  # Work that needs a human: a crash or an ambiguous upload parks a job in
+  # needs-review and nothing retries it. Red until someone resolves it. The
+  # route always answers 200; the body carries the count.
+  - name: app-a review queue
+    group: Internal services
+    url: http://homeserver.home.example.internal:3001/api/review-queue
+    interval: 5m
+    client:
+      timeout: 5s
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].needsReview == 0"
+    alerts:
+      - type: custom
+
+  # Upstream OAuth token: the status route performs a real refresh, so
+  # authenticated == true means the refresh token works, not merely that it is
+  # on disk. Every probe asks the provider for a token, hence 30m.
+  - name: app-a upstream token
+    group: Internal services
+    url: http://homeserver.home.example.internal:3001/api/oauth/status
+    interval: 30m
+    client:
+      timeout: 10s
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].authenticated == true"
+    alerts:
+      - type: custom
+
+  # -- infrastructure ----------------------------------------------------------
+  - name: homeserver SSH
+    group: Infrastructure
+    url: tcp://192.0.2.10:22
+    interval: 2m
+    client:
+      timeout: 5s
+    conditions:
+      - "[CONNECTED] == true"
+      - "[RESPONSE_TIME] < 2000"
+    alerts:
+      - type: custom
+
+  - name: router DNS
+    group: Infrastructure
+    url: 192.0.2.1
+    interval: 2m
+    client:
+      timeout: 5s
+    dns:
+      query-name: example.com
+      query-type: A
+    conditions:
+      - "[DNS_RCODE] == NOERROR"
+      - "[RESPONSE_TIME] < 2000"
+    alerts:
+      - type: custom
+
+  # By IP on purpose, so "the internet is down" and "DNS is down" are two
+  # different red lights.
+  - name: internet HTTPS
+    group: Infrastructure
+    url: https://1.1.1.1/cdn-cgi/trace
+    interval: 2m
+    client:
+      timeout: 10s
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 5000"
+    alerts:
+      - type: custom
+
+  # Registration expiry via RDAP/WHOIS. Needs the apex (a subdomain is not in
+  # the registry) and an interval of at least 5m; Gatus caches the date.
+  - name: example.com domain
+    group: Infrastructure
+    url: https://example.com
+    interval: 12h
+    client:
+      timeout: 10s
+    conditions:
+      - "[DOMAIN_EXPIRATION] > 720h"
+    alerts:
+      - type: custom

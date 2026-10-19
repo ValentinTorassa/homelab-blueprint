@@ -1,0 +1,15 @@
+{
+  "_comment": "The documented disaster-recovery table: what each family promises. check_backup_consistency.py fails when the cron lines, the offsite lists or the restore test say something else.",
+  "families": {
+    "app-a":  {"time": "02:30", "keep": 7,  "offsite": "daily"},
+    "blog":   {"time": "02:35", "keep": 7,  "offsite": "weekly"},
+    "mailer": {"time": "02:40", "keep": 14, "offsite": "daily"}
+  },
+  "apps": ["app-a", "app-b", "blog", "mailer", "scheduler"],
+  "state_elsewhere": {
+    "app-b": "app-a"
+  },
+  "known_gaps": {
+    "scheduler": "decision: holds only a rebuildable cache; not backed up on purpose"
+  }
+}

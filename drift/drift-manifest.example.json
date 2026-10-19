@@ -1,0 +1,47 @@
+{
+  "_comment": "What check_drift.py compares. Add a service here when it is deployed; remove it when it is retired. Repo paths refer to your own config repo (here they mirror this one where possible); ~ is the ops user's home on the server.",
+  "tokens": {
+    "example-org": "~/.config/homelab/github-readonly.token"
+  },
+  "entries": [
+    {
+      "name": "the drift check itself",
+      "type": "files",
+      "repo": "example-org/homelab-config",
+      "files": {
+        "drift/check_drift.py": "/usr/local/bin/check_drift.py",
+        "drift/drift-manifest.json": "/usr/local/share/homelab/drift-manifest.json"
+      }
+    },
+    {
+      "name": "jobs, wrappers and units",
+      "type": "files",
+      "repo": "example-org/homelab-config",
+      "files": {
+        "monitoring/jobs/run-and-report.sh": "/usr/local/bin/run-and-report.sh",
+        "monitoring/jobs/report-job.sh": "/usr/local/bin/report-job.sh",
+        "backups/backup_snapshot.sh": "/usr/local/sbin/backup_snapshot.sh",
+        "backups/restore_test.py": "/usr/local/bin/restore_test.py",
+        "backups/systemd/restore-test.service": "/etc/systemd/system/restore-test.service",
+        "backups/systemd/restore-test.timer": "/etc/systemd/system/restore-test.timer",
+        "backups/examples/cron.d-backups": "/etc/cron.d/homelab-backups"
+      }
+    },
+    {
+      "name": "app-a (deployed by copying a build, not a checkout)",
+      "type": "tree",
+      "repo": "example-org/app-a",
+      "repo_dir": "server",
+      "server_dir": "/srv/apps/app-a",
+      "exclude": ["uploads"],
+      "ignore_missing": ["scripts/dev-*"]
+    },
+    {
+      "name": "the ops user's crontab",
+      "type": "command",
+      "repo": "example-org/homelab-config",
+      "path": "cron/ops-crontab",
+      "command": "crontab -l"
+    }
+  ]
+}

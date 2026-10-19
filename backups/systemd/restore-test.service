@@ -1,0 +1,36 @@
+[Unit]
+Description=Weekly restore test of the backups (throwaway copies, no network)
+Documentation=file:///usr/local/bin/restore_test.py
+# Ordered after docker but never pulls it in: without docker, the families that
+# need a container come out "unknown" (red) and the rest are still tested.
+After=docker.service local-fs.target
+
+[Service]
+Type=oneshot
+# root: snapshots are 0700 root. The result reaches Gatus (Jobs / restore-test)
+# through the wrapper, reported as the unprivileged ops user.
+Environment=REPORT_AS=ops
+ExecStart=/usr/local/bin/run-and-report.sh restore-test /usr/local/bin/restore_test.py --backup-root /srv/backups --state-dir /var/lib/restore-test
+# Always runs, also when TimeoutStartSec kills the test: removes leftover
+# restoretest-* containers and scratch directories.
+ExecStopPost=/usr/local/bin/restore_test.py --cleanup --state-dir /var/lib/restore-test
+TimeoutStartSec=3h
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+
+# Scratch and state (last-run.json, history.jsonl).
+StateDirectory=restore-test
+StateDirectoryMode=0700
+# The backups, and production data, are read-only for this process. A bug in a
+# family check cannot damage what it is checking.
+ProtectSystem=strict
+ReadOnlyPaths=/srv
+ReadWritePaths=/run/docker.sock
+# The reporter writes its log under the ops user's home (a system account
+# whose home is /var/lib/ops).
+ProtectHome=read-only
+ReadWritePaths=-/var/lib/ops/.local/state/homelab
+PrivateTmp=true
+# NoNewPrivileges is left off on purpose: the report is sent through `sudo -u ops`
+# (a privilege DROP), and sudo refuses to run under no_new_privs.

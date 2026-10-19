@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pyyaml==6.0.2
+      - name: Shell syntax and shellcheck
+        run: make lint
+      - name: Example configs are coherent (Gatus lint, backup coherence)
+        run: make check
+      - name: Unit tests
+        run: make test
+      - name: Demo (backup -> restore test -> corruption caught)
+        run: make demo

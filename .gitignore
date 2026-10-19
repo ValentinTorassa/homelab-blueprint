@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+# Never commit real configuration or keys made from the examples.
+*.env
+!*.env.example
+*.pem
+*.token
+gatus-jobs.env

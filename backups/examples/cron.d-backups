@@ -1,0 +1,14 @@
+# /etc/cron.d/homelab-backups (example)
+#
+# Nightly snapshots, one family per line, staggered so they never compete for
+# the disk. Each runs as root (it reads every app's files) and reports to Gatus
+# as the unprivileged ops user. KEEP is pinned here, on the line, so the
+# consistency check can compare it with the documented retention.
+
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# m  h  dom mon dow user  command
+30   2  *   *   *   root  KEEP=7  REPORT_AS=ops run-and-report.sh backup-app-a  backup_snapshot.sh app-a  >> /var/log/homelab/backup-app-a.log 2>&1
+35   2  *   *   *   root  KEEP=7  REPORT_AS=ops run-and-report.sh backup-blog   backup_snapshot.sh blog   >> /var/log/homelab/backup-blog.log 2>&1
+40   2  *   *   *   root  KEEP=14 REPORT_AS=ops run-and-report.sh backup-mailer backup_snapshot.sh mailer >> /var/log/homelab/backup-mailer.log 2>&1

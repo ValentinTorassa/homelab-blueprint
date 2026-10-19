@@ -1,0 +1,16 @@
+# /etc/cron.d/homelab-jobs (example). Every scheduled job goes through
+# run-and-report.sh, so its result lands in the Gatus "Jobs" group and a job
+# that stops running goes red when its heartbeat expires.
+#
+# The nightly backups have their own file: backups/examples/cron.d-backups.
+# monitoring/check_gatus_config.py fails CI if a key used here has no endpoint.
+
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Offsite push to S3, after the nightly snapshots (root reads the snapshots;
+# the report is sent as the unprivileged ops user).
+45 3 * * * root REPORT_AS=ops run-and-report.sh backup-offsite-s3 backup_offsite_s3.sh >> /var/log/homelab/offsite-s3.log 2>&1
+
+# Drift between git and what is installed. Read-only, runs as ops.
+10 6 * * * ops run-and-report.sh config-drift check_drift.py --manifest /usr/local/share/homelab/drift-manifest.json >> /var/log/homelab/drift.log 2>&1
