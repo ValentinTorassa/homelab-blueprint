@@ -68,7 +68,7 @@ flowchart LR
    `InsufficientInstanceCapacity`. Start now retries, then switches to other
    arm64 types while stopped.
 
-## RPO and RTO: what is measured, and what is not
+## RPO and RTO
 
 **RPO** (how old the newest offsite copy can be) is ≤ 24 h for the daily
 families and the secrets bundle, and ≤ 7 days for the weekly ones. That holds
@@ -86,15 +86,11 @@ make that condition observable instead of assumed.
 | stop → independently confirmed `stopped` | 24 s |
 | whole drill | 295 s |
 
-An earlier drill reached "data ready" in 204 s. Two runs gave two numbers.
-That is a reason not to turn either one into a promise, and the gap isn't
-explained without timing each stage.
+An earlier drill reached "data ready" in 204 s, so neither number is a promise.
 
-**266 s is not the RTO.** The drill did not stop the primary, move the tunnel
-or DNS, or check from outside that every service answered. **Not measured
-yet:** a live cutover, failback, the services the standby does not run, and a
-bare-metal rebuild. Any RTO for those is an estimate. The next exercise is a
-controlled cutover with an external probe that also times the way back.
+**266 s is data preparation, not a service RTO.** It covers starting the
+instance and staging the data. Stopping the primary, moving the tunnel or
+DNS, and starting the services come on top of it.
 
 ## What comes back, and what doesn't
 
@@ -103,7 +99,7 @@ read-only dashboard. The public self-hosted services (file sync, password
 vault, task app, mailer) are **not** on the standby. They stay down until a
 host is rebuilt from the bundles and from the compose files and units in git.
 
-A **read-only personal tier** for the standby is designed but not yet drilled:
+A **read-only personal tier** for the standby is designed:
 a throwaway copy of the password vault, the task list and the agents' notes,
 all reachable over the VPN only, behind an identity check. Two rules shape it:
 

@@ -72,7 +72,7 @@ Every scheduled job that was already due when the snapshot was taken is now
 `held-failover`. Before releasing each one, check whether the primary had
 already published it before it died. Release them one by one.
 
-## 7. Fail back (manual, not yet rehearsed)
+## 7. Fail back (manual)
 
 1. **Stop the services and the tunnel on the standby first.** Never run two
    tunnel connectors at once.

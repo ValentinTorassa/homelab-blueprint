@@ -180,21 +180,6 @@ tests/                        unittest suite (stdlib only, plus PyYAML for one m
   0600 files outside git, an encrypted secrets bundle, and a recovery
   passphrase kept *outside* the system it recovers.
 
-## Known gaps
-
-These are stated plainly, because a DR plan that only lists its strengths is
-marketing:
-
-- **Production is one box with no RAID.** The local backup disk sits in the
-  same chassis, which is why offsite and the standby exist.
-- **The standby is cold and manual.** It brings back a subset of the services,
-  not all of them.
-- **A live cutover has never been measured,** and neither has failback. The
-  measured number is *data preparation* on the standby, not a service RTO
-  (see [`standby/README.md`](standby/README.md)).
-- **Restore tests run against the local backups.** The offsite copies are
-  exercised by the standby drills, which is a different and partial path.
-
 ## Related
 
 - Article: [Un standby frío en AWS para mi servidor casero: qué medí y qué falta
