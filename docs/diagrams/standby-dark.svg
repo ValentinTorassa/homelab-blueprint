@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 340" width="880" height="340" role="img" aria-labelledby="title desc">
+<title id="title">Cold standby in AWS</title>
+<desc id="desc">The home server ships small families and the gpg secrets bundle daily and large families weekly to a versioned S3 bucket with Object Lock, which the uploader cannot delete from. The stopped standby reads the bucket through a read-only instance role. The operator decides, starts it and runs takeover.sh --primary-is-down; only then does the standby serve users through the same tunnel.</desc>
+<style>
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif;fill:#f0f6fc}
+.mono{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace}
+.t{font-size:14px;font-weight:600}
+.s{font-size:12px;fill:#9198a1}
+.l{font-size:12px;font-weight:500}
+.cap{font-size:11px;font-weight:600;letter-spacing:.08em;fill:#9198a1}
+.chipt{font-size:11px;fill:#9198a1}
+.panel{fill:#151b23;stroke:#3d444d}
+.node{fill:#212830;stroke:#3d444d;stroke-width:1.25}
+.chip{fill:#2a313c}
+.icon{fill:none;stroke:#9198a1;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.e{fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.dash{stroke-dasharray:5 4}
+.life{stroke:#3d444d;stroke-width:1.25;stroke-dasharray:3 4}
+.badge{font-size:10px;font-weight:700;fill:#0d1117}
+</style>
+<defs><marker id="m-mon" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#4493f8"/></marker><marker id="m-bak" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#3fb950"/></marker><marker id="m-drf" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#ab7df8"/></marker><marker id="m-sby" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#f0883e"/></marker><marker id="m-bad" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#f85149"/></marker><marker id="m-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#d29922"/></marker><marker id="m-ink" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#9198a1"/></marker></defs>
+<rect x="703" y="16" width="124" height="40" rx="20.0" class="node"/>
+<g class="icon"><circle cx="727.0" cy="32" r="3.5"/><path d="M720.0,44c0,-7 14,-7 14,0"/></g>
+<text x="745" y="41" class="t" text-anchor="start">operator</text>
+<rect x="16" y="132" width="180" height="72" rx="10" class="node"/>
+<g class="icon"><rect x="33" y="159.0" width="18" height="8" rx="2"/><rect x="33" y="169.0" width="18" height="8" rx="2"/><path d="M37,163.0h.01M37,173.0h.01"/></g>
+<text x="62" y="165" class="t" text-anchor="start">homeserver</text>
+<text x="62" y="182" class="s" text-anchor="start">the primary</text>
+<rect x="345" y="132" width="190" height="72" rx="10" class="node"/>
+<g class="icon"><ellipse cx="371" cy="162.0" rx="8" ry="2.5"/><path d="M363,162.0l2,13a6,2 0 0 0 12,0l2,-13"/></g>
+<text x="391" y="165" class="t" text-anchor="start">S3 bucket</text>
+<text x="391" y="182" class="s" text-anchor="start">offsite copies</text>
+<rect x="670" y="132" width="190" height="72" rx="10" class="node"/>
+<g class="icon"><rect x="686" y="158.0" width="20" height="20" rx="4"/><path d="M692.5,165.5a5,5 0 1 0 7,0M696,162.5v4.5"/></g>
+<text x="716" y="165" class="t" text-anchor="start">cold standby</text>
+<text x="716" y="182" class="s" text-anchor="start">EC2 arm64, stopped</text>
+<rect x="362" y="214" width="69.7" height="20" rx="10" class="chip"/>
+<text x="396.9" y="228" class="chipt" text-anchor="middle">versioned</text>
+<rect x="439.7" y="214" width="78.3" height="20" rx="10" class="chip"/>
+<text x="478.8" y="228" class="chipt" text-anchor="middle">Object Lock</text>
+<rect x="363.3" y="240" width="153.3" height="20" rx="10" class="chip"/>
+<text x="440" y="254" class="chipt" text-anchor="middle">the uploader cannot delete</text>
+<rect x="711" y="284" width="108" height="40" rx="20.0" class="node"/>
+<g class="icon"><circle cx="732.0" cy="300" r="3.2"/><path d="M725.5,312c0,-6.5 13,-6.5 13,0"/><path d="M738.5,296.5a3.2,3.2 0 0 1 0,6.4M741.0,305.5c2.2,1 3.5,3 3.5,6.5"/></g>
+<text x="753" y="309" class="t" text-anchor="start">users</text>
+<path d="M196,168 L345,168" class="e" stroke="#3fb950" marker-end="url(#m-bak)"/>
+<text x="270.5" y="144" class="l" text-anchor="middle" style="fill:#3fb950;">daily: small families</text>
+<text x="270.5" y="159" class="l" text-anchor="middle" style="fill:#3fb950;">and the secrets bundle</text>
+<text x="270.5" y="186" class="l" text-anchor="middle" style="fill:#3fb950;">weekly: large families</text>
+<path d="M535,168 L670,168" class="e dash" stroke="#f0883e" marker-end="url(#m-sby)"/>
+<text x="602.5" y="159" class="l" text-anchor="middle" style="fill:#f0883e;">read-only</text>
+<text x="602.5" y="186" class="l" text-anchor="middle" style="fill:#f0883e;">instance role</text>
+<path d="M765,56 L765,132" class="e dash" stroke="#f0883e" marker-end="url(#m-sby)"/>
+<text x="753" y="80" class="l" text-anchor="end" style="fill:#f0883e;">1. decides</text>
+<text x="753" y="96" class="l" text-anchor="end" style="fill:#f0883e;">2. starts</text>
+<text x="753" y="112" class="l" text-anchor="end" style="fill:#f0883e">3. <tspan class="mono" style="font-size:11.5px">takeover.sh --primary-is-down</tspan></text>
+<path d="M765,204 L765,284" class="e dash" stroke="#f0883e" marker-end="url(#m-sby)"/>
+<text x="753" y="248" class="l" text-anchor="end" style="fill:#f0883e;">same tunnel, only after the takeover</text>
+<path d="M48.2,304h22" class="e" stroke="#3fb950"/>
+<text x="78.2" y="308" class="s" text-anchor="start">backups</text>
+<path d="M146.4,304h22" class="e dash" stroke="#f0883e"/>
+<text x="176.4" y="308" class="s" text-anchor="start">only in a drill or a takeover</text>
+</svg>

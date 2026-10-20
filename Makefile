@@ -1,7 +1,7 @@
 PYTHON ?= python3
 SHELL_SCRIPTS := $(shell git ls-files --cached --others --exclude-standard '*.sh')
 
-.PHONY: test test-docker check lint demo all
+.PHONY: test test-docker check lint demo diagrams all
 
 all: lint check test
 
@@ -23,3 +23,7 @@ lint:
 
 demo:
 	bash backups/demo.sh
+
+# Redraw the README diagrams from docs/diagrams/render.py (demo.svg: render.py --demo).
+diagrams:
+	$(PYTHON) docs/diagrams/render.py

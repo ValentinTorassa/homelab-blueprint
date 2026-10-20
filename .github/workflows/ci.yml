@@ -31,6 +31,8 @@ jobs:
         run: make test
       - name: Demo (backup -> restore test -> corruption caught)
         run: make demo
+      - name: Diagrams match their source
+        run: make diagrams && git diff --exit-code -- docs/diagrams
 
   restore-postgres:
     # The mailer family for real: a SQL dump loaded into a brand-new Postgres in a

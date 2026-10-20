@@ -21,32 +21,10 @@ improvements made while extracting them.
 
 ## Architecture
 
-```mermaid
-flowchart LR
-  subgraph home["Home network"]
-    srv["homeserver<br/>services + nightly jobs"]
-    disk[("backup disk<br/>same chassis")]
-    mon["monitor<br/>(small always-on board)<br/>Gatus"]
-  end
-  subgraph cloud["Cloud"]
-    s3[("S3 bucket<br/>versioned + Object Lock")]
-    standby["cold standby (EC2)<br/>stopped at rest"]
-    relay["alert relay<br/>(serverless function)"]
-  end
-  gh["GitHub<br/>source of truth"]
-  me(("operator"))
-
-  srv -- "nightly snapshots" --> disk
-  srv -- "offsite: daily / weekly" --> s3
-  srv -- "job results (push)" --> mon
-  mon -- "HTTP / TCP / DNS probes (pull)" --> srv
-  mon -- "alerts" --> relay
-  mon -- "signed heartbeat" --> relay
-  relay -- "chat message" --> me
-  srv -. "nightly drift check<br/>(blob SHAs via API)" .-> gh
-  standby -. "read-only role" .-> s3
-  me -. "decides, starts,<br/>takes over" .-> standby
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/architecture-dark.svg">
+  <img alt="Architecture: the homeserver snapshots to a local disk and ships offsite copies to a versioned S3 bucket; jobs push results to Gatus on separate hardware, which probes the server and sends alerts and a signed heartbeat to a relay that messages the operator; a nightly drift check compares the server with GitHub; the stopped standby in AWS reads the bucket with a read-only role and is started by the operator." src="docs/diagrams/architecture-light.svg">
+</picture>
 
 Design choices that run through all four pillars:
 
@@ -67,22 +45,10 @@ Design choices that run through all four pillars:
 
 The common path: a nightly backup fails at 02:30.
 
-```mermaid
-sequenceDiagram
-  participant cron as cron (02:30)
-  participant w as run-and-report.sh
-  participant job as backup_snapshot.sh
-  participant g as Gatus (monitor)
-  participant r as alert relay
-  participant me as operator
-  cron->>w: backup-app-a backup_snapshot.sh app-a
-  w->>job: run (stdout untouched, stderr captured)
-  job-->>w: exit 1, "DUMP_CMD failed" on stderr
-  w->>g: POST /api/v1/endpoints/jobs_backup-app-a/external<br/>success=false, error="exit 1: … DUMP_CMD failed"
-  w-->>cron: exit 1 (the log and cron still see the real failure)
-  g->>r: custom alert (failure threshold reached)
-  r->>me: "Jobs backup-app-a: TRIGGERED, exit 1: … DUMP_CMD failed"
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/failure-path-dark.svg">
+  <img alt="Sequence: cron runs run-and-report.sh, the backup exits 1 with DUMP_CMD failed, the wrapper pushes success=false with that error to Gatus and keeps exit 1, Gatus alerts through the relay, and the operator gets a chat message naming the job and the error." src="docs/diagrams/failure-path-light.svg">
+</picture>
 
 And everything else that can go wrong, with what catches it:
 
@@ -118,13 +84,7 @@ restores them. Then it silently appends one byte to a file inside the newest
 backup, the kind of damage a dying disk or a buggy job does, and shows the
 weekly test catching it:
 
-```text
-== 3. one upload inside the newest backup rots
-fail    app-a        0.0s  SHA256SUMS: 1 file(s) do not match (0 missing)
-pass    blog         0.0s  ok
-restore-test: 1 ok, 1 fail, 0 unknown
-restore-test: 1 ok, 1 fail, 0 unknown | FAIL app-a: SHA256SUMS: 1 file(s) do not match (0 missing)
-```
+<img alt="make demo: two apps are snapshotted and the restore test passes; one byte appended to a file in the newest backup makes the restore test fail app-a with SHA256SUMS: 1 file(s) do not match" src="docs/diagrams/demo.svg">
 
 The last line goes to stderr. It is exactly what `run-and-report.sh` would
 send to Gatus as the alert text.
@@ -158,6 +118,7 @@ standby/
 docs/
   decisions.md                the design decisions, ADR-style
   lessons.md                  the failures that shaped each piece
+  diagrams/render.py          draws every diagram here, light and dark (make diagrams)
 tests/                        unittest suite (stdlib only, plus PyYAML for one module)
   test_restore_docker.py      the mailer family against a real Postgres
 ```

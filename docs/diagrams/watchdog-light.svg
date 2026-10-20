@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 196" width="760" height="196" role="img" aria-labelledby="title desc">
+<title id="title">Dead man&#x27;s switch for the monitor</title>
+<desc id="desc">The relay checks the age of the monitor&#x27;s last signed heartbeat on its own schedule. Healthy moves to warning when beats stop, and to critical when they are still missing. When a heartbeat arrives, it sends exactly one recovery message and returns to healthy.</desc>
+<style>
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif;fill:#1f2328}
+.mono{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace}
+.t{font-size:14px;font-weight:600}
+.s{font-size:12px;fill:#59636e}
+.l{font-size:12px;font-weight:500}
+.cap{font-size:11px;font-weight:600;letter-spacing:.08em;fill:#59636e}
+.chipt{font-size:11px;fill:#59636e}
+.panel{fill:#f6f8fa;stroke:#d1d9e0}
+.node{fill:#ffffff;stroke:#d1d9e0;stroke-width:1.25}
+.chip{fill:#eff2f5}
+.icon{fill:none;stroke:#59636e;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.e{fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.dash{stroke-dasharray:5 4}
+.life{stroke:#afb8c1;stroke-width:1.25;stroke-dasharray:3 4}
+.badge{font-size:10px;font-weight:700;fill:#ffffff}
+</style>
+<defs><marker id="m-mon" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#0969da"/></marker><marker id="m-bak" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#1a7f37"/></marker><marker id="m-drf" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#8250df"/></marker><marker id="m-sby" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#bc4c00"/></marker><marker id="m-bad" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#cf222e"/></marker><marker id="m-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#9a6700"/></marker><marker id="m-ink" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#59636e"/></marker></defs>
+<rect x="40" y="40" width="160" height="56" rx="12" class="node" style="stroke:#1a7f37;stroke-width:1.75"/>
+<circle cx="62" cy="62" r="5" fill="#1a7f37"/>
+<text x="76" y="66" class="t" text-anchor="start" style="fill:#1a7f37;">healthy</text>
+<text x="76" y="84" class="s" text-anchor="start">beats arriving</text>
+<rect x="300" y="40" width="160" height="56" rx="12" class="node" style="stroke:#9a6700;stroke-width:1.75"/>
+<circle cx="322" cy="62" r="5" fill="#9a6700"/>
+<text x="336" y="66" class="t" text-anchor="start" style="fill:#9a6700;">warning</text>
+<text x="336" y="84" class="s" text-anchor="start">one message</text>
+<rect x="560" y="40" width="160" height="56" rx="12" class="node" style="stroke:#cf222e;stroke-width:1.75"/>
+<circle cx="582" cy="62" r="5" fill="#cf222e"/>
+<text x="596" y="66" class="t" text-anchor="start" style="fill:#cf222e;">critical</text>
+<text x="596" y="84" class="s" text-anchor="start">one message</text>
+<path d="M200,68 L300,68" class="e" stroke="#9a6700" marker-end="url(#m-warn)"/>
+<text x="250" y="60" class="l" text-anchor="middle" style="fill:#9a6700;">beats stop</text>
+<path d="M460,68 L560,68" class="e" stroke="#cf222e" marker-end="url(#m-bad)"/>
+<text x="510" y="60" class="l" text-anchor="middle" style="fill:#cf222e;">still missing</text>
+<path d="M640,96 L640,132 Q640,140 632,140 L128,140 Q120,140 120,132 L120,96" class="e" stroke="#1a7f37" marker-end="url(#m-bak)"/>
+<path d="M380,96 L380,140" class="e" stroke="#1a7f37"/>
+<text x="380" y="164" class="l" text-anchor="middle" style="fill:#1a7f37;">a heartbeat arrives: exactly one recovery message</text>
+<text x="380" y="186" class="s" text-anchor="middle">the relay checks the age of the last signed beat on its own schedule</text>
+</svg>

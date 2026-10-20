@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 546" width="920" height="546" role="img" aria-labelledby="title desc">
+<title id="title">make demo</title>
+<desc id="desc">Recorded output of make demo: two apps are snapshotted, the weekly restore test passes, one byte is appended to a file inside the newest backup, and the restore test fails app-a with "SHA256SUMS: 1 file(s) do not match".</desc>
+<style>
+text{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;font-size:11.5px;fill:#e6edf3}
+.bar{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif;font-size:12px}
+.ln{animation:in .25s ease-out backwards}
+@keyframes in{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.ln{animation:none}}
+</style>
+<rect x=".5" y=".5" width="919" height="545" rx="10" fill="#0d1117" stroke="#30363d"/>
+<path d="M.5,34V10.5a10,10 0 0 1 10,-10H909.5a10,10 0 0 1 10,10V34z" fill="#161b22"/>
+<path d="M.5,34H919.5" stroke="#30363d"/>
+<circle cx="20" cy="17" r="6" fill="#ff5f57"/><circle cx="40" cy="17" r="6" fill="#febc2e"/><circle cx="60" cy="17" r="6" fill="#28c840"/>
+<text x="460.0" y="21" text-anchor="middle" fill="#8b949e" class="bar">make demo · homelab-blueprint</text>
+<text x="16" y="56" xml:space="preserve" class="ln" style="animation-delay:0.30s"><tspan fill="#3fb950" font-weight="700">$ </tspan><tspan fill="#f0f6fc" font-weight="700">make demo</tspan></text>
+<text x="16" y="74" xml:space="preserve" class="ln" style="animation-delay:1.00s"><tspan fill="#f0f6fc" font-weight="700">== 1. nightly snapshots</tspan></text>
+<text x="16" y="92" xml:space="preserve" class="ln" style="animation-delay:1.06s"><tspan fill="#8b949e">[2026-10-19 21:28:38]</tspan><tspan fill="#e6edf3"> copying /tmp/tmp.mHSyVkozhE/apps/app-a</tspan></text>
+<text x="16" y="110" xml:space="preserve" class="ln" style="animation-delay:1.12s"><tspan fill="#8b949e">[2026-10-19 21:28:38]</tspan><tspan fill="#e6edf3"> sqlite online backup: data/app.db</tspan></text>
+<text x="16" y="128" xml:space="preserve" class="ln" style="animation-delay:1.18s"><tspan fill="#8b949e">[2026-10-19 21:28:38]</tspan><tspan fill="#e6edf3"> published app-a/2026-10-19_21-28-38 (5 files, 32K)</tspan></text>
+<text x="16" y="146" xml:space="preserve" class="ln" style="animation-delay:1.24s"><tspan fill="#8b949e">[2026-10-19 21:28:38]</tspan><tspan fill="#e6edf3"> done: app-a keeps 1 snapshot(s)</tspan></text>
+<text x="16" y="164" xml:space="preserve" class="ln" style="animation-delay:1.30s"><tspan fill="#8b949e">[2026-10-19 21:28:38]</tspan><tspan fill="#e6edf3"> copying /tmp/tmp.mHSyVkozhE/apps/blog</tspan></text>
+<text x="16" y="182" xml:space="preserve" class="ln" style="animation-delay:1.36s"><tspan fill="#8b949e">[2026-10-19 21:28:38]</tspan><tspan fill="#e6edf3"> sqlite online backup: blog.db</tspan></text>
+<text x="16" y="200" xml:space="preserve" class="ln" style="animation-delay:1.42s"><tspan fill="#8b949e">[2026-10-19 21:28:38]</tspan><tspan fill="#e6edf3"> published blog/2026-10-19_21-28-38 (1 files, 12K)</tspan></text>
+<text x="16" y="218" xml:space="preserve" class="ln" style="animation-delay:1.48s"><tspan fill="#8b949e">[2026-10-19 21:28:38]</tspan><tspan fill="#e6edf3"> done: blog keeps 1 snapshot(s)</tspan></text>
+<text x="16" y="236" xml:space="preserve" class="ln" style="animation-delay:1.54s"><tspan fill="#e6edf3"></tspan></text>
+<text x="16" y="254" xml:space="preserve" class="ln" style="animation-delay:2.24s"><tspan fill="#f0f6fc" font-weight="700">== 2. weekly restore test on good backups</tspan></text>
+<text x="16" y="272" xml:space="preserve" class="ln" style="animation-delay:2.30s"><tspan fill="#3fb950" font-weight="700">pass</tspan><tspan fill="#e6edf3">    app-a        0.0s  </tspan><tspan fill="#e6edf3">ok</tspan></text>
+<text x="16" y="290" xml:space="preserve" class="ln" style="animation-delay:2.36s"><tspan fill="#8b949e">        app-a.age_hours=0.0 restored_files=5 restored_bytes=18687 sha256.checked=4 db.attachments=3 db.items=3 attachments.ok=3</tspan></text>
+<text x="16" y="308" xml:space="preserve" class="ln" style="animation-delay:2.42s"><tspan fill="#3fb950" font-weight="700">pass</tspan><tspan fill="#e6edf3">    blog         0.0s  </tspan><tspan fill="#e6edf3">ok</tspan></text>
+<text x="16" y="326" xml:space="preserve" class="ln" style="animation-delay:2.48s"><tspan fill="#8b949e">        blog.age_hours=0.0 restored_files=2 restored_bytes=8268 sha256.checked=1 db.posts=1</tspan></text>
+<text x="16" y="344" xml:space="preserve" class="ln" style="animation-delay:2.54s"><tspan fill="#e6edf3">restore-test: 2 ok, 0 fail, 0 unknown</tspan></text>
+<text x="16" y="362" xml:space="preserve" class="ln" style="animation-delay:2.60s"><tspan fill="#e6edf3"></tspan></text>
+<text x="16" y="380" xml:space="preserve" class="ln" style="animation-delay:3.30s"><tspan fill="#f0f6fc" font-weight="700">== 3. one upload inside the newest backup rots</tspan></text>
+<text x="16" y="398" xml:space="preserve" class="ln" style="animation-delay:3.36s"><tspan fill="#f85149" font-weight="700">fail</tspan><tspan fill="#e6edf3">    app-a        0.0s  </tspan><tspan fill="#f85149">SHA256SUMS: 1 file(s) do not match (0 missing)</tspan></text>
+<text x="16" y="416" xml:space="preserve" class="ln" style="animation-delay:3.42s"><tspan fill="#8b949e">        app-a.age_hours=0.0 restored_files=5 restored_bytes=18688 sha256.checked=4</tspan></text>
+<text x="16" y="434" xml:space="preserve" class="ln" style="animation-delay:3.48s"><tspan fill="#3fb950" font-weight="700">pass</tspan><tspan fill="#e6edf3">    blog         0.0s  </tspan><tspan fill="#e6edf3">ok</tspan></text>
+<text x="16" y="452" xml:space="preserve" class="ln" style="animation-delay:3.54s"><tspan fill="#8b949e">        blog.age_hours=0.0 restored_files=2 restored_bytes=8268 sha256.checked=1 db.posts=1</tspan></text>
+<text x="16" y="470" xml:space="preserve" class="ln" style="animation-delay:3.60s"><tspan fill="#e6edf3">restore-test: 1 ok, 1 fail, 0 unknown</tspan></text>
+<rect x="10" y="475" width="900" height="18" rx="3" fill="#f85149" fill-opacity=".14" class="ln" style="animation-delay:3.66s"/>
+<text x="16" y="488" xml:space="preserve" class="ln" style="animation-delay:3.66s"><tspan fill="#f85149" font-weight="700">restore-test: 1 ok, 1 fail, 0 unknown | FAIL app-a: SHA256SUMS: 1 file(s) do not match (0 missing)</tspan></text>
+<text x="16" y="506" xml:space="preserve" class="ln" style="animation-delay:3.72s"><tspan fill="#e6edf3"></tspan></text>
+<text x="16" y="524" xml:space="preserve" class="ln" style="animation-delay:3.78s"><tspan fill="#d29922">restore test exit code: 1 (non-zero: run-and-report.sh would push a failure to Gatus)</tspan></text>
+</svg>

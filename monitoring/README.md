@@ -92,12 +92,10 @@ heartbeat from the monitor every few minutes to the relay outside, and the
 relay checks the age of the last heartbeat on its own schedule. It is a dead
 man's switch, and a whole-house outage surfaces within minutes:
 
-```text
-         beats stop               still missing
-healthy ──────────────► warning ──────────────► critical
-   ▲                       │                       │
-   └───────── heartbeat arrives: one "recovery" ───┘
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../docs/diagrams/watchdog-dark.svg">
+  <img alt="Watchdog states: healthy moves to warning when the heartbeats stop and to critical when they are still missing; when a heartbeat arrives, the relay sends exactly one recovery message and returns to healthy." src="../docs/diagrams/watchdog-light.svg">
+</picture>
 
 - The relay sends exactly one message per state change. It stores the new
   state *only after* the chat webhook accepts the message, so a failed

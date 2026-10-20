@@ -12,13 +12,10 @@ until a person decides to use it.
 
 ## Shape
 
-```mermaid
-flowchart LR
-  srv["homeserver"] -- "daily: small families + gpg secrets bundle<br/>weekly: large families" --> s3[("S3<br/>versioned, Object Lock<br/>uploader cannot delete")]
-  s3 -- "read-only instance role" --> sb["standby (EC2, arm64)<br/>STOPPED at rest"]
-  op(("operator")) -- "1. decides<br/>2. starts<br/>3. takeover.sh --primary-is-down" --> sb
-  sb -- "same tunnel, only after takeover" --> users(("users"))
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../docs/diagrams/standby-dark.svg">
+  <img alt="Cold standby: the homeserver ships daily and weekly copies to a versioned S3 bucket the uploader cannot delete from; the stopped standby reads it with a read-only instance role; the operator decides, starts it and runs takeover.sh --primary-is-down, and only then does it serve users through the same tunnel." src="../docs/diagrams/standby-light.svg">
+</picture>
 
 | Piece | Choice | Why |
 |---|---|---|

@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 556" width="880" height="556" role="img" aria-labelledby="title desc">
+<title id="title">How a failed nightly backup reaches the operator</title>
+<desc id="desc">cron starts run-and-report.sh at 02:30, which runs backup_snapshot.sh. The job exits 1 with DUMP_CMD failed on stderr. The wrapper pushes success=false with that error to the Gatus external endpoint, returns exit 1 to cron, Gatus fires its alert through the relay, and the operator gets a chat message naming the job and the error.</desc>
+<style>
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif;fill:#f0f6fc}
+.mono{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace}
+.t{font-size:14px;font-weight:600}
+.s{font-size:12px;fill:#9198a1}
+.l{font-size:12px;font-weight:500}
+.cap{font-size:11px;font-weight:600;letter-spacing:.08em;fill:#9198a1}
+.chipt{font-size:11px;fill:#9198a1}
+.panel{fill:#151b23;stroke:#3d444d}
+.node{fill:#212830;stroke:#3d444d;stroke-width:1.25}
+.chip{fill:#2a313c}
+.icon{fill:none;stroke:#9198a1;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.e{fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.dash{stroke-dasharray:5 4}
+.life{stroke:#3d444d;stroke-width:1.25;stroke-dasharray:3 4}
+.badge{font-size:10px;font-weight:700;fill:#0d1117}
+</style>
+<defs><marker id="m-mon" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#4493f8"/></marker><marker id="m-bak" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#3fb950"/></marker><marker id="m-drf" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#ab7df8"/></marker><marker id="m-sby" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#f0883e"/></marker><marker id="m-bad" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#f85149"/></marker><marker id="m-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#d29922"/></marker><marker id="m-ink" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1L9,5L1,9z" fill="#9198a1"/></marker></defs>
+<path d="M56,52V456" class="life"/>
+<rect x="14" y="16" width="84" height="36" rx="8" class="node"/>
+<text x="56" y="39" class="t" text-anchor="middle">cron</text>
+<path d="M200,52V456" class="life"/>
+<rect x="125" y="16" width="150" height="36" rx="8" class="node"/>
+<text x="200" y="39" class="l mono" text-anchor="middle" style="font-weight:600;">run-and-report.sh</text>
+<path d="M368,52V456" class="life"/>
+<rect x="292" y="16" width="152" height="36" rx="8" class="node"/>
+<text x="368" y="39" class="l mono" text-anchor="middle" style="font-weight:600;">backup_snapshot.sh</text>
+<path d="M548,52V456" class="life"/>
+<rect x="500" y="16" width="96" height="36" rx="8" class="node"/>
+<text x="548" y="39" class="t" text-anchor="middle">Gatus</text>
+<path d="M690,52V456" class="life"/>
+<rect x="634" y="16" width="112" height="36" rx="8" class="node"/>
+<text x="690" y="39" class="t" text-anchor="middle">alert relay</text>
+<path d="M816,52V476" class="life"/>
+<rect x="768" y="16" width="96" height="36" rx="8" class="node"/>
+<text x="816" y="39" class="t" text-anchor="middle">operator</text>
+<rect x="195" y="92" width="10" height="248" rx="2" class="node"/>
+<rect x="363" y="140" width="10" height="68" rx="2" class="node"/>
+<rect x="543" y="276" width="10" height="116" rx="2" class="node"/>
+<rect x="685" y="376" width="10" height="68" rx="2" class="node"/>
+<path d="M61,96 L195,96" class="e" stroke="#9198a1" marker-end="url(#m-ink)"/>
+<text x="143.5" y="86" class="l" text-anchor="middle" style="fill:#9198a1;font-size:12px">02:30, backup-app-a</text>
+<circle cx="74" cy="96" r="8.5" fill="#9198a1"/>
+<text x="74" y="99.5" class="badge" text-anchor="middle">1</text>
+<path d="M205,148 L363,148" class="e" stroke="#9198a1" marker-end="url(#m-ink)"/>
+<text x="299.5" y="138" class="l" text-anchor="middle" style="fill:#9198a1;font-size:12px">run it, capture stderr</text>
+<circle cx="218" cy="148" r="8.5" fill="#9198a1"/>
+<text x="218" y="151.5" class="badge" text-anchor="middle">2</text>
+<path d="M363,200 L205,200" class="e dash" stroke="#f85149" marker-end="url(#m-bad)"/>
+<text x="268.5" y="190" class="l" text-anchor="middle" style="fill:#f85149;font-size:12px">exit 1: DUMP_CMD failed</text>
+<circle cx="350" cy="200" r="8.5" fill="#f85149"/>
+<text x="350" y="203.5" class="badge" text-anchor="middle">3</text>
+<path d="M205,280 L543,280" class="e" stroke="#4493f8" marker-end="url(#m-mon)"/>
+<text x="389.5" y="255" class="l mono" text-anchor="middle" style="fill:#4493f8;font-size:11.5px">POST …/endpoints/jobs_backup-app-a/external</text>
+<text x="389.5" y="270" class="l mono" text-anchor="middle" style="fill:#4493f8;font-size:11.5px">success=false  error=&quot;exit 1: … DUMP_CMD failed&quot;</text>
+<circle cx="218" cy="280" r="8.5" fill="#4493f8"/>
+<text x="218" y="283.5" class="badge" text-anchor="middle">4</text>
+<path d="M195,332 L61,332" class="e dash" stroke="#f85149" marker-end="url(#m-bad)"/>
+<text x="112.5" y="322" class="l" text-anchor="middle" style="fill:#f85149;font-size:12px">exit code kept: 1</text>
+<circle cx="182" cy="332" r="8.5" fill="#f85149"/>
+<text x="182" y="335.5" class="badge" text-anchor="middle">5</text>
+<path d="M553,384 L685,384" class="e" stroke="#4493f8" marker-end="url(#m-mon)"/>
+<text x="634.5" y="374" class="l" text-anchor="middle" style="fill:#4493f8;font-size:12px">failure alert</text>
+<circle cx="566" cy="384" r="8.5" fill="#4493f8"/>
+<text x="566" y="387.5" class="badge" text-anchor="middle">6</text>
+<path d="M695,436 L811,436" class="e" stroke="#4493f8" marker-end="url(#m-mon)"/>
+<text x="768.5" y="426" class="l" text-anchor="middle" style="fill:#4493f8;font-size:12px">chat message</text>
+<circle cx="708" cy="436" r="8.5" fill="#4493f8"/>
+<text x="708" y="439.5" class="badge" text-anchor="middle">7</text>
+<rect x="520" y="476" width="344" height="64" rx="10" class="node"/>
+<rect x="520" y="476" width="5" height="64" rx="2" fill="#f85149"/>
+<circle cx="542" cy="497" r="4.5" fill="#f85149"/>
+<text x="554" y="502" class="t">Jobs / backup-app-a<tspan dx="8" style="fill:#f85149">TRIGGERED</tspan></text>
+<text x="554" y="526" class="s mono" text-anchor="start">exit 1: … DUMP_CMD failed</text>
+<text x="504" y="512" class="s" text-anchor="end">what lands in the chat →</text>
+</svg>
