@@ -24,10 +24,13 @@ NAME="${NAME:-homelab-standby}"
 TYPE="${TYPE:-t4g.medium}"
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
-# Debian publishes its official AMI ids as public SSM parameters: no account id
-# to hard-code, and always the newest point release.
-AMI=$(aws ssm get-parameter --name /aws/service/debian/release/bookworm/latest/arm64 \
-  --query Parameter.Value --output text)
+# The newest official Debian 12 arm64 image. 136693071363 is the AWS account the
+# Debian cloud team publishes from (wiki.debian.org/Cloud/AmazonEC2Image): pinning
+# the owner is what keeps a look-alike community AMI out.
+AMI=$(aws ec2 describe-images --owners 136693071363 \
+  --filters "Name=name,Values=debian-12-arm64-*" "Name=state,Values=available" \
+  --query 'sort_by(Images,&CreationDate)[-1].ImageId' --output text)
+[[ "$AMI" == ami-* ]] || { echo "no official Debian 12 arm64 AMI found in $AWS_REGION" >&2; exit 1; }
 VPC=$(aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query 'Vpcs[0].VpcId' --output text)
 SUBNET=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC" --query 'Subnets[0].SubnetId' --output text)
 MY_IP=$(curl -fsS https://checkip.amazonaws.com | tr -d '\n')
