@@ -1,12 +1,16 @@
 PYTHON ?= python3
 SHELL_SCRIPTS := $(shell git ls-files --cached --others --exclude-standard '*.sh')
 
-.PHONY: test check lint demo all
+.PHONY: test test-docker check lint demo all
 
 all: lint check test
 
 test:
 	$(PYTHON) -m unittest discover -s tests
+
+# The mailer family against a real Postgres: needs docker and the image pulled.
+test-docker:
+	$(PYTHON) -m unittest discover -s tests -p test_restore_docker.py -v
 
 check:
 	$(PYTHON) monitoring/check_gatus_config.py

@@ -32,6 +32,28 @@ jobs:
       - name: Demo (backup -> restore test -> corruption caught)
         run: make demo
 
+  restore-postgres:
+    # The mailer family for real: a SQL dump loaded into a brand-new Postgres in a
+    # container with no network. RT_REQUIRE_DOCKER turns a skip into a failure, so
+    # this job cannot go green without having restored anything.
+    name: restore test (real Postgres)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      RT_POSTGRES_IMAGE: postgres:16-alpine
+      RT_REQUIRE_DOCKER: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Pull the image (the restore test itself never pulls)
+        run: docker pull "$RT_POSTGRES_IMAGE"
+      - name: Restore tests against Docker
+        run: make test-docker
+
   secrets:
     name: secret scan (gitleaks)
     runs-on: ubuntu-24.04

@@ -101,13 +101,17 @@ And everything else that can go wrong, with what catches it:
 
 Requirements: bash, Python 3.10+, git, sqlite3. PyYAML is needed for the
 Gatus lint and its tests, and those tests are skipped if it is missing. No
-root, Docker or AWS account is needed.
+root or AWS account is needed, and Docker only for `make test-docker`.
 
 ```bash
-make test     # 54 unit tests: wrappers, snapshot script, restore test, drift, coherence, Gatus lint
-make check    # lint the example Gatus config and check the example backup sources agree
-make demo     # backup -> restore test (green) -> silent corruption -> restore test (red)
+make test         # 57 unit tests: wrappers, snapshot script, restore test, drift, coherence, Gatus lint
+make check        # lint the example Gatus config and check the example backup sources agree
+make demo         # backup -> restore test (green) -> silent corruption -> restore test (red)
+make test-docker  # the mailer family restored into a real Postgres (needs Docker; CI runs it)
 ```
+
+The three tests that need Docker are skipped by `make test` when it is not
+there. CI runs them in a job of their own that fails instead of skipping.
 
 `make demo` builds two sample apps in a temp directory, snapshots them, and
 restores them. Then it silently appends one byte to a file inside the newest
@@ -155,6 +159,7 @@ docs/
   decisions.md                the design decisions, ADR-style
   lessons.md                  the failures that shaped each piece
 tests/                        unittest suite (stdlib only, plus PyYAML for one module)
+  test_restore_docker.py      the mailer family against a real Postgres
 ```
 
 ## What is intentionally left out

@@ -9,7 +9,8 @@
 #      a buggy job) and runs the restore test again: red, with the reason on the
 #      last stderr line, which is what the Gatus alert would carry.
 #
-# The `mailer` family needs docker and a local postgres image, so it is left out.
+# The `mailer` family needs docker and a local postgres image, so it is left out
+# here; `make test-docker` (and CI) restores it into a real Postgres.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

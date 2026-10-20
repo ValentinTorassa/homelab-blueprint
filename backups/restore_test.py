@@ -390,8 +390,10 @@ def mailer(ctx: Context):
     with throwaway(ctx, 'db', image, env, [(restored, '/restore')]) as name:
         d = ctx.docker
 
+        # Over TCP, not the socket: on first boot the image runs a temporary
+        # server on the socket only, and a load started then dies with its restart.
         def ready():
-            return subprocess.run([d, 'exec', name, 'pg_isready', '-U', 'postgres'],
+            return subprocess.run([d, 'exec', name, 'pg_isready', '-h', '127.0.0.1', '-U', 'postgres'],
                                   capture_output=True).returncode == 0
         wait_for(ready, 120, 'postgres')
         load = subprocess.run([d, 'exec', name, 'psql', '-U', 'postgres', '-q',
