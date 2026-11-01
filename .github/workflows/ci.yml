@@ -56,6 +56,30 @@ jobs:
       - name: Restore tests against Docker
         run: make test-docker
 
+  terraform:
+    # The standby module: fmt, validate and terraform test against a mock AWS
+    # provider. There are no AWS credentials here, by design, and the AWS_*
+    # variables below point the provider nowhere. The drift plan against the
+    # real account runs on the server, never in public CI.
+    name: terraform (fmt, validate, test; no AWS)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      AWS_PROFILE: nonexistent-profile
+      AWS_CONFIG_FILE: /dev/null
+      AWS_SHARED_CREDENTIALS_FILE: /dev/null
+      AWS_EC2_METADATA_DISABLED: 'true'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.17.1
+          terraform_wrapper: false
+      - name: fmt, validate, test (module and example)
+        run: make terraform
+
   secrets:
     name: secret scan (gitleaks)
     runs-on: ubuntu-24.04

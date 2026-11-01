@@ -110,3 +110,19 @@ exists, by name only.
 in the docs is older than 30 days. Run logs and history files are exempt.
 **Why:** A verification date that nobody refreshes slowly turns into a lie.
 **Cost:** Periodic re-verification, or a reworded note. Both are the point.
+
+### 14. The standby's code is public; its values are private
+
+**Decision:** The standby is also a Terraform module here. It reads the same
+policy files and bootstrap script as `provision-standby.sh`. A private
+repository calls it with the real values, holds the state, and runs a weekly
+plan on the server as a drift check. An existing bucket can stay outside
+Terraform (`create_bucket = false`).
+**Why:** The bash script builds the standby once and then forgets it. A plan
+compares the account with the code every week, so an opened port, a policy
+added to the role or a standby left running goes red. Keeping the values and
+the state private keeps the real identifiers out of this repository and out
+of public CI logs.
+**Cost:** Two ways to build the same thing, kept in step by sharing the
+policy files. And a state file that has to be kept as carefully as the
+identifiers it holds.

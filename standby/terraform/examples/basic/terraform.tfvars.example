@@ -1,0 +1,14 @@
+# Copy to terraform.tfvars (git-ignored) and replace every value. These are
+# placeholders: the subnet and the key pair do not exist, and 203.0.113.0/24 is
+# a documentation range (RFC 5737).
+region           = "us-east-1"
+bucket_name      = "example-offsite-bucket"
+subnet_id        = "subnet-0123456789abcdef0"
+key_name         = "example-key"
+ssh_ingress_cidr = "203.0.113.10/32"
+
+# Retention is a decision: COMPLIANCE cannot be shortened or removed by anyone
+# until it expires, and a locked version cannot be deleted. For a throwaway
+# practice copy, keep GOVERNANCE and use a few days.
+object_lock_mode = "GOVERNANCE"
+object_lock_days = 30

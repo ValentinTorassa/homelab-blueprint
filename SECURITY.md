@@ -18,12 +18,17 @@ copy of the live configuration:
 ## Running it
 
 - The tests and `make demo` run unprivileged, in temporary directories, with
-  no network access and no cloud calls.
+  no network access and no cloud calls. `make terraform` needs the network
+  once, for `terraform init` to download the AWS provider. Its tests run
+  against a mock provider, with every AWS credential source pointed nowhere.
 - `backups/restore_test.py` and `backups/backup_snapshot.sh` are meant to run
   as root on a real server. Read them first. Run them against a test backup
   root before pointing them at production data.
-- `standby/*.sh` call AWS and create billable resources. `takeover-drill.sh
-  --dry-run` prints every command and executes none. Start there.
+- `standby/*.sh` call AWS and create billable resources, and so does
+  `terraform apply` in `standby/terraform/`. `takeover-drill.sh --dry-run`
+  prints every command and executes none. Start there.
+- The Terraform state holds every real identifier of the account it manages.
+  Keep it, and your `*.tfvars`, out of any public repository.
 
 ## Handling secrets in your own copy
 

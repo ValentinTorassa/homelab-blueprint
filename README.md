@@ -67,13 +67,15 @@ And everything else that can go wrong, with what catches it:
 
 Requirements: bash, Python 3.10+, git, sqlite3. PyYAML is needed for the
 Gatus lint and its tests, and those tests are skipped if it is missing. No
-root or AWS account is needed, and Docker only for `make test-docker`.
+root or AWS account is needed, Docker only for `make test-docker`, and
+Terraform 1.9+ only for `make terraform`.
 
 ```bash
 make test         # 57 unit tests: wrappers, snapshot script, restore test, drift, coherence, Gatus lint
 make check        # lint the example Gatus config and check the example backup sources agree
 make demo         # backup -> restore test (green) -> silent corruption -> restore test (red)
 make test-docker  # the mailer family restored into a real Postgres (needs Docker; CI runs it)
+make terraform    # the standby as Terraform: fmt, validate, terraform test against a mock AWS provider
 ```
 
 The three tests that need Docker are skipped by `make test` when it is not
@@ -114,7 +116,8 @@ standby/
   standby-userdata.sh         cloud-init: runtimes, rehearsal block, pre-staged bundles
   takeover.sh                 guarded takeover, run on the standby
   takeover-drill.sh           start → dry-run takeover → always stop; evidence log
-  iam/                        read-only standby role, no-delete uploader
+  iam/                        read-only standby role and its trust, no-delete uploader (shared by both paths)
+  terraform/                  the same standby as a Terraform module: example root, offline tests
 docs/
   decisions.md                the design decisions, ADR-style
   lessons.md                  the failures that shaped each piece

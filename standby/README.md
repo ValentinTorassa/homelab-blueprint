@@ -108,13 +108,36 @@ all reachable over the VPN only, behind an identity check. Two rules shape it:
   on the ports that config routes public hostnames to, the internet could
   reach them.
 
+## Terraform
+
+The same standby can be built with Terraform, from [`terraform/`](terraform/).
+Both paths read the policies in [`iam/`](iam/) and the bootstrap script, and
+substitute the same placeholder, so they cannot grant different permissions.
+
+| | `provision-standby.sh` | `terraform/` |
+|---|---|---|
+| Builds | Security group, role, key pair, instance | The same, plus the offsite bucket and the uploader policy, each optional. The key pair is referenced, never generated |
+| Afterwards | Nothing: it builds once and forgets | A plan compares the account with the code |
+| Stopped at rest | By hand, after the bootstrap | `instance_state = "stopped"`, the default |
+| Checked by | `bash -n`, shellcheck | `terraform test` against a mock provider: no open ingress, IMDSv2, encryption, Object Lock, read-only role, no-delete uploader |
+
+**Code public, values private.** This repository ships the module, an example
+root with placeholder values, and tests that run offline. A private repository
+calls the module pinned to a tag, with the real values. It holds the state and
+the `import` blocks that adopted the existing standby, and it runs
+`terraform plan -detailed-exitcode` on the server every week, reporting to
+Gatus like every other job. The plan needs credentials and prints real
+identifiers, so it never runs in public CI. Details in
+[`terraform/README.md`](terraform/README.md).
+
 ## Files
 
 | File | What |
 |---|---|
 | [`provision-standby.sh`](provision-standby.sh) | Rebuilds the security group, read-only role, key pair and instance from nothing |
+| [`terraform/`](terraform/) | The same standby as a Terraform module, plus the bucket and uploader policy; an example root; offline tests |
 | [`standby-userdata.sh`](standby-userdata.sh) | Cloud-init: runtimes, VPN and tunnel clients (unauthenticated), rehearsal block, pre-staged bundles |
 | [`takeover.sh`](takeover.sh) | The guarded takeover, run on the standby |
 | [`takeover-drill.sh`](takeover-drill.sh) | The drill, run from a laptop: start → dry-run takeover → always stop → evidence |
-| [`iam/`](iam/) | Read-only standby policy and no-delete uploader policy |
+| [`iam/`](iam/) | Read-only standby policy and its trust policy, no-delete uploader policy. Shared by both paths |
 | [`runbook.md`](runbook.md) | What a person does, in order, on the bad day, and every quarter |
