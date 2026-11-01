@@ -46,8 +46,10 @@ aws ec2 authorize-security-group-ingress --group-id "$SG" --protocol tcp --port 
 
 # Read-only role: the standby restores FROM the bucket and can never modify it.
 # No access key ever lands on the machine; it gets short-lived role credentials.
-aws iam create-role --role-name "$NAME-role" --assume-role-policy-document \
-  '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"ec2.amazonaws.com"},"Action":"sts:AssumeRole"}]}' >/dev/null
+# The policy files in iam/ are shared with terraform/, which substitutes the
+# same placeholder, so the two paths cannot grant different things.
+aws iam create-role --role-name "$NAME-role" \
+  --assume-role-policy-document "file://$HERE/iam/standby-trust.json" >/dev/null
 aws iam put-role-policy --role-name "$NAME-role" --policy-name "$NAME-read-backups" \
   --policy-document "$(sed "s/example-offsite-bucket/$BUCKET/g" "$HERE/iam/standby-read-only.json")"
 aws iam create-instance-profile --instance-profile-name "$NAME-profile" >/dev/null
@@ -63,7 +65,7 @@ IID=$(aws ec2 run-instances --image-id "$AMI" --instance-type "$TYPE" \
   --iam-instance-profile "Name=$NAME-profile" \
   --block-device-mappings '[{"DeviceName":"/dev/xvda","Ebs":{"VolumeSize":60,"VolumeType":"gp3","DeleteOnTermination":true,"Encrypted":true}}]' \
   --metadata-options 'HttpTokens=required,HttpEndpoint=enabled' \
-  --user-data "file://$HERE/standby-userdata.sh" \
+  --user-data "$(sed "s/example-offsite-bucket/$BUCKET/g; s/^REGION=.*/REGION=$AWS_REGION/" "$HERE/standby-userdata.sh")" \
   --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$NAME},{Key=purpose,Value=cold-standby}]" \
   --query 'Instances[0].InstanceId' --output text)
 aws ec2 wait instance-running --instance-ids "$IID"
